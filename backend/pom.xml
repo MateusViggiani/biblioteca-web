@@ -21,6 +21,8 @@
         <java.version>17</java.version>
         <!-- versão nova do Lombok para compilar também em JDKs recentes -->
         <lombok.version>1.18.48</lombok.version>
+        <!-- Byte Buddy novo para o Mockito funcionar em JDKs recentes -->
+        <byte-buddy.version>1.18.17</byte-buddy.version>
     </properties>
 
     <dependencies>
