@@ -1,0 +1,101 @@
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { autorService, livroService } from '../services/api';
+
+const vazio = { titulo: '', isbn: '', anoPublicacao: '', genero: '', autorId: '' };
+
+function LivroForm() {
+  const [livro, setLivro] = useState(vazio);
+  const [autores, setAutores] = useState([]);
+  const [erro, setErro] = useState('');
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const editando = Boolean(id);
+
+  useEffect(() => {
+    autorService.listar()
+      .then((res) => setAutores(res.data))
+      .catch(() => setErro('Erro ao carregar autores.'));
+
+    if (editando) {
+      livroService.buscar(id)
+        .then((res) => {
+          const l = res.data;
+          setLivro({
+            titulo: l.titulo,
+            isbn: l.isbn || '',
+            anoPublicacao: l.anoPublicacao ?? '',
+            genero: l.genero || '',
+            autorId: l.autor ? String(l.autor.id) : '',
+          });
+        })
+        .catch(() => setErro('Livro não encontrado.'));
+    }
+  }, [id, editando]);
+
+  const alterar = (e) => setLivro({ ...livro, [e.target.name]: e.target.value });
+
+  const salvar = (e) => {
+    e.preventDefault();
+    // o autor vai só com o id: "autor": { "id": 1 }
+    const dados = {
+      titulo: livro.titulo,
+      isbn: livro.isbn || null,
+      anoPublicacao: livro.anoPublicacao ? Number(livro.anoPublicacao) : null,
+      genero: livro.genero || null,
+      autor: { id: Number(livro.autorId) },
+    };
+    const requisicao = editando ? livroService.atualizar(id, dados) : livroService.criar(dados);
+    requisicao
+      .then(() => navigate('/livros'))
+      .catch(() => setErro('Erro ao salvar livro. Verifique os campos.'));
+  };
+
+  return (
+    <div>
+      <Link to="/livros" className="voltar">← Voltar para livros</Link>
+      <div className="cabecalho">
+        <div>
+          <h2>{editando ? 'Editar livro' : 'Novo livro'}</h2>
+          <p className="subtitulo">Preencha os dados do livro e escolha o autor. Campos com * são obrigatórios.</p>
+        </div>
+      </div>
+      {erro && <p className="erro">{erro}</p>}
+
+      <form onSubmit={salvar} className="formulario card">
+        <label className="inteiro">
+          Título *
+          <input name="titulo" value={livro.titulo} onChange={alterar} maxLength="200" required />
+        </label>
+        <label className="inteiro">
+          Autor *
+          <select name="autorId" value={livro.autorId} onChange={alterar} required>
+            <option value="">Selecione um autor</option>
+            {autores.map((autor) => (
+              <option key={autor.id} value={autor.id}>{autor.nome}</option>
+            ))}
+          </select>
+        </label>
+        <label>
+          ISBN
+          <input name="isbn" value={livro.isbn} onChange={alterar} maxLength="20" />
+        </label>
+        <label>
+          Ano de publicação
+          <input type="number" name="anoPublicacao" value={livro.anoPublicacao} onChange={alterar} />
+        </label>
+        <label>
+          Gênero
+          <input name="genero" value={livro.genero} onChange={alterar} maxLength="50" />
+        </label>
+
+        <div className="acoes">
+          <button type="submit" className="btn btn-primario">Salvar</button>
+          <button type="button" className="btn" onClick={() => navigate('/livros')}>Cancelar</button>
+        </div>
+      </form>
+    </div>
+  );
+}
+
+export default LivroForm;
