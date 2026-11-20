@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { autorService, livroService } from '../services/api';
 
 const vazio = { titulo: '', isbn: '', anoPublicacao: '', genero: '', autorId: '' };
@@ -53,15 +53,21 @@ function LivroForm() {
 
   return (
     <div>
-      <h2>{editando ? 'Editar livro' : 'Novo livro'}</h2>
+      <Link to="/livros" className="voltar">← Voltar para livros</Link>
+      <div className="cabecalho">
+        <div>
+          <h2>{editando ? 'Editar livro' : 'Novo livro'}</h2>
+          <p className="subtitulo">Preencha os dados do livro e escolha o autor. Campos com * são obrigatórios.</p>
+        </div>
+      </div>
       {erro && <p className="erro">{erro}</p>}
 
-      <form onSubmit={salvar} className="formulario">
-        <label>
+      <form onSubmit={salvar} className="formulario card">
+        <label className="inteiro">
           Título *
           <input name="titulo" value={livro.titulo} onChange={alterar} maxLength="200" required />
         </label>
-        <label>
+        <label className="inteiro">
           Autor *
           <select name="autorId" value={livro.autorId} onChange={alterar} required>
             <option value="">Selecione um autor</option>
