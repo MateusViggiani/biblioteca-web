@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { autorService } from '../services/api';
 
 const vazio = { nome: '', nacionalidade: '', dataNascimento: '' };
@@ -36,11 +36,17 @@ function AutorForm() {
 
   return (
     <div>
-      <h2>{editando ? 'Editar autor' : 'Novo autor'}</h2>
+      <Link to="/autores" className="voltar">← Voltar para autores</Link>
+      <div className="cabecalho">
+        <div>
+          <h2>{editando ? 'Editar autor' : 'Novo autor'}</h2>
+          <p className="subtitulo">Preencha os dados do autor. Campos com * são obrigatórios.</p>
+        </div>
+      </div>
       {erro && <p className="erro">{erro}</p>}
 
-      <form onSubmit={salvar} className="formulario">
-        <label>
+      <form onSubmit={salvar} className="formulario card">
+        <label className="inteiro">
           Nome *
           <input name="nome" value={autor.nome} onChange={alterar} maxLength="100" required />
         </label>

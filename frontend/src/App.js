@@ -10,7 +10,10 @@ function App() {
   return (
     <BrowserRouter>
       <header className="menu">
-        <h1>📚 Biblioteca Web</h1>
+        <div className="logo">
+          <span className="logo-icone">📚</span>
+          <h1>Biblioteca Web</h1>
+        </div>
         <nav>
           <NavLink to="/autores">Autores</NavLink>
           <NavLink to="/livros">Livros</NavLink>

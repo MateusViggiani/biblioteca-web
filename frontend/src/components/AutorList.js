@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { autorService } from '../services/api';
+import Avatar from './Avatar';
 
 function AutorList() {
   const [autores, setAutores] = useState([]);
@@ -27,12 +28,16 @@ function AutorList() {
   return (
     <div>
       <div className="cabecalho">
-        <h2>Autores</h2>
+        <div>
+          <h2>Autores</h2>
+          <p className="subtitulo">{autores.length} {autores.length === 1 ? 'autor cadastrado' : 'autores cadastrados'}</p>
+        </div>
         <Link to="/autores/novo" className="btn btn-primario">+ Novo autor</Link>
       </div>
 
       {erro && <p className="erro">{erro}</p>}
 
+      <div className="card">
       <table>
         <thead>
           <tr>
@@ -48,9 +53,11 @@ function AutorList() {
           )}
           {autores.map((autor) => (
             <tr key={autor.id}>
-              <td>{autor.nome}</td>
-              <td>{autor.nacionalidade || '-'}</td>
-              <td>{formatarData(autor.dataNascimento)}</td>
+              <td>
+                <div className="pessoa"><Avatar nome={autor.nome} />{autor.nome}</div>
+              </td>
+              <td className="secundario">{autor.nacionalidade || '-'}</td>
+              <td className="secundario">{formatarData(autor.dataNascimento)}</td>
               <td className="acoes">
                 <button className="btn" onClick={() => navigate(`/autores/editar/${autor.id}`)}>Editar</button>
                 <button className="btn btn-perigo" onClick={() => excluir(autor.id)}>Excluir</button>
@@ -59,6 +66,7 @@ function AutorList() {
           ))}
         </tbody>
       </table>
+      </div>
     </div>
   );
 }
